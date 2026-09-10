@@ -1,0 +1,52 @@
+{% extends 'gallery/base.html' %}
+{% block title %}{{ event.title }} — Artis{% endblock %}
+{% block content %}
+
+<div class="max-w-3xl">
+    <a href="{% url 'event-list' %}" class="text-stone-500 hover:text-amber-400 text-sm">← Nazad na događanja</a>
+    <div class="flex justify-between items-start mt-4">
+        <h1 class="text-4xl font-light mb-2">{{ event.title }}</h1>
+        {% if user.is_authenticated %}
+        <a href="{% url 'toggle-bookmark' event.pk %}"
+            class="{% if is_bookmarked %}bg-amber-400 text-stone-950{% else %}border border-amber-400 text-amber-400{% endif %} px-4 py-2 rounded hover:bg-amber-300 hover:text-stone-950 transition text-sm">
+            {% if is_bookmarked %}Ukloni bookmark{% else %}Spremi događanje{% endif %}
+        </a>
+        {% endif %}
+    </div>
+
+    <p class="text-stone-400 mb-1">{{ event.get_event_type_display }} · {{ event.location }}</p>
+    <p class="text-stone-400 text-sm mb-6">{{ event.date }} u {{ event.start_time }} · Kapacitet: {{ event.capacity }}
+        {% if event.is_free %} · <span class="text-green-400">Besplatno</span>{% endif %}
+    </p>
+
+    <p class="text-stone-300 leading-relaxed">{{ event.description }}</p>
+
+    {% if event.artworks.all %}
+    <h2 class="text-2xl font-light mt-10 mb-4 border-b border-stone-800 pb-2">Izložena djela</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {% for artwork in event.artworks.all %}
+        <div class="bg-stone-900 rounded p-4 hover:border hover:border-amber-400 transition border border-transparent">
+            {% if artwork.image %}
+            <img src="{{ artwork.image.url }}" class="w-full h-48 object-contain bg-stone-800 rounded mb-3">
+            {% else %}
+            <div class="w-full h-48 bg-stone-800 rounded mb-3 flex items-center justify-center text-stone-600">Bez slike
+            </div>
+            {% endif %}
+            <a href="{% url 'artwork-detail' artwork.pk %}" class="text-lg hover:text-amber-400 transition">{{ artwork.title }}</a>
+            <p class="text-stone-400 text-sm mt-1">{{ artwork.artist.name }} · {{ artwork.year }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if user.is_staff %}
+    <div class="flex gap-4 mt-8">
+        <a href="{% url 'event-update' event.pk %}"
+            class="bg-amber-400 text-stone-950 px-4 py-2 rounded hover:bg-amber-300 transition">Uredi</a>
+        <a href="{% url 'event-delete' event.pk %}"
+            class="border border-red-400 text-red-400 px-4 py-2 rounded hover:bg-red-400 hover:text-white transition">Briši</a>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

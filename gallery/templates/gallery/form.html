@@ -1,0 +1,133 @@
+{% extends 'gallery/base.html' %}
+{% block title %}Forma — Artis{% endblock %}
+{% block content %}
+
+<div class="max-w-2xl">
+    <a href="javascript:history.back()" class="text-stone-500 hover:text-amber-400 text-sm">← Nazad</a>
+    <h1 class="text-3xl font-light mt-4 mb-8">
+        {% if form.instance.pk %}Uredi{% else %}Dodaj novo{% endif %}
+    </h1>
+
+    <form method="post" enctype="multipart/form-data" class="flex flex-col gap-4">
+        {% csrf_token %}
+        {% for field in form %}
+        <div>
+            {% if field.field.widget.input_type == 'checkbox' %}
+            <label class="flex items-center gap-3 cursor-pointer">
+                {{ field }}
+                <span class="text-stone-400 text-sm">{{ field.label }}</span>
+            </label>
+            {% elif field.field.widget.input_type == 'file' %}
+            <label class="block text-stone-400 text-sm mb-2">{{ field.label }}</label>
+            <div class="flex flex-col gap-2 text-stone-400 text-sm">
+                {{ field }}
+            </div>
+            {% else %}
+            <label class="block text-stone-400 text-sm mb-1">{{ field.label }}</label>
+            {{ field }}
+            {% if field.html_name == 'artworks' %}
+            <p class="text-stone-600 text-xs mt-1">Drži Ctrl (ili Cmd na Macu) za odabir više djela.</p>
+            {% endif %}
+            {% endif %}
+            {% if field.help_text %}
+            <p class="text-stone-600 text-xs mt-1">{{ field.help_text }}</p>
+            {% endif %}
+            {% if field.errors %}
+            <p class="text-red-400 text-sm mt-1">{{ field.errors|join:", " }}</p>
+            {% endif %}
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const select = document.querySelector('select[multiple]');
+                    if (!select) return;
+
+                    select.addEventListener('mousedown', function (e) {
+                        e.preventDefault();
+                        const option = e.target;
+                        if (option.tagName !== 'OPTION') return;
+                        option.selected = !option.selected;
+                        select.focus();
+                    });
+                });
+            </script>
+
+        </div>
+        {% endfor %}
+        <button type="submit"
+            class="bg-amber-400 text-stone-950 px-6 py-2 rounded hover:bg-amber-300 transition w-fit mt-4">
+            Spremi
+        </button>
+    </form>
+</div>
+
+<style>
+    input:not([type="checkbox"]),
+    textarea,
+    select {
+        background: #1c1917;
+        border: 1px solid #44403c;
+        color: #e7e5e4;
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.25rem;
+        width: 100%;
+    }
+
+    input:not([type="checkbox"]):focus,
+    textarea:focus,
+    select:focus {
+        outline: none;
+        border-color: #fbbf24;
+    }
+
+    select option {
+        background: #1c1917;
+    }
+
+    input[type="checkbox"] {
+        width: 1rem;
+        height: 1rem;
+        cursor: pointer;
+        accent-color: #fbbf24;
+    }
+
+    /* File field razmaci */
+    .clearable-file-input {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .clearable-file-input a {
+        color: #fbbf24;
+    }
+
+    .clearable-file-input input[type="checkbox"] {
+        margin-right: 0.3rem;
+    }
+
+    /* File field */
+    .clearable-file-input,
+    div.file-upload {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    select[multiple] {
+        height: auto;
+        padding: 0.25rem;
+    }
+
+    select[multiple] option {
+        padding: 0.4rem 0.75rem;
+        border-radius: 0.25rem;
+        margin: 0.1rem 0;
+    }
+
+    select[multiple] option:checked {
+        background: #fbbf24;
+        color: #0c0a09;
+    }
+</style>
+
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'gallery/base.html' %}
+{% block title %}{{ artwork.title }} — Artis{% endblock %}
+{% block content %}
+
+<div class="max-w-3xl">
+    <a href="{% url 'artwork-list' %}" class="text-stone-500 hover:text-amber-400 text-sm">← Nazad na djela</a>
+    <div class="flex justify-between items-start mt-4">
+        <h1 class="text-4xl font-light mb-2">{{ artwork.title }}</h1>
+        {% if user.is_authenticated %}
+        <a href="{% url 'toggle-favorite' artwork.pk %}"
+           class="{% if is_favorite %}text-amber-400{% else %}text-stone-600{% endif %} hover:text-amber-400 transition text-2xl" title="Favorit">
+            ★
+        </a>
+        {% endif %}
+    </div>
+
+    <p class="text-stone-400 mb-4">
+        <a href="{% url 'artist-detail' artwork.artist.pk %}" class="hover:text-amber-400">{{ artwork.artist.name }}</a>
+        · {{ artwork.get_medium_display }} · {{ artwork.year }}
+    </p>
+
+    {% if artwork.image %}
+    <img src="{{ artwork.image.url }}" class="w-full max-h-96 object-contain bg-stone-800 rounded mb-6">
+    {% endif %}
+
+    <p class="text-stone-300 leading-relaxed">{{ artwork.description }}</p>
+
+    <div class="mt-6 flex gap-6 text-sm text-stone-400">
+        {% if artwork.price %}
+        <span>Cijena: <span class="text-amber-400">{{ artwork.price }} €</span></span>
+        {% endif %}
+        <span>Dostupnost:
+            {% if artwork.is_available %}
+            <span class="text-green-400">Dostupno</span>
+            {% else %}
+            <span class="text-red-400">Nije dostupno</span>
+            {% endif %}
+        </span>
+    </div>
+
+    {% if user.is_staff %}
+    <div class="flex gap-4 mt-8">
+        <a href="{% url 'artwork-update' artwork.pk %}" class="bg-amber-400 text-stone-950 px-4 py-2 rounded hover:bg-amber-300 transition">Uredi</a>
+        <a href="{% url 'artwork-delete' artwork.pk %}" class="border border-red-400 text-red-400 px-4 py-2 rounded hover:bg-red-400 hover:text-white transition">Briši</a>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

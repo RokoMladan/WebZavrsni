@@ -1,0 +1,35 @@
+{% extends 'gallery/base.html' %}
+{% block title %}Umjetnici — Artis{% endblock %}
+{% block content %}
+
+<div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-light">Umjetnici</h1>
+    {% if user.is_staff %}
+    <a href="{% url 'artist-create' %}" class="bg-amber-400 text-stone-950 px-4 py-2 rounded hover:bg-amber-300 transition">+ Novi umjetnik</a>
+    {% endif %}
+</div>
+
+<form method="get" class="mb-6">
+    <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Pretraži umjetnike..."
+        class="w-full bg-stone-900 border border-stone-700 rounded px-4 py-2 focus:outline-none focus:border-amber-400">
+</form>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {% for artist in artists %}
+    <div class="bg-stone-900 rounded p-5">
+        <a href="{% url 'artist-detail' artist.pk %}" class="text-xl hover:text-amber-400 transition">{{ artist.name }}</a>
+        <p class="text-stone-400 text-sm mt-1">{{ artist.nationality }} · r. {{ artist.birth_year }}</p>
+        <p class="text-stone-500 text-sm mt-2">{{ artist.bio|truncatewords:20 }}</p>
+        {% if user.is_staff %}
+        <div class="flex gap-3 mt-3 text-sm">
+            <a href="{% url 'artist-update' artist.pk %}" class="text-amber-400 hover:underline">Uredi</a>
+            <a href="{% url 'artist-delete' artist.pk %}" class="text-red-400 hover:underline">Briši</a>
+        </div>
+        {% endif %}
+    </div>
+    {% empty %}
+    <p class="text-stone-500">Nema umjetnika.</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

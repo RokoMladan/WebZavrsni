@@ -1,0 +1,28 @@
+{% extends 'gallery/base.html' %}
+{% block title %}Prijava — Artis{% endblock %}
+{% block content %}
+
+<div class="max-w-md mx-auto mt-16">
+    <h1 class="text-3xl font-light mb-8 text-center">Prijava</h1>
+    <form method="post" class="flex flex-col gap-4">
+        {% csrf_token %}
+        {% for field in form %}
+        <div>
+            <label class="block text-stone-400 text-sm mb-1">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+            <p class="text-red-400 text-sm mt-1">{{ field.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="bg-amber-400 text-stone-950 px-6 py-2 rounded hover:bg-amber-300 transition mt-2">Prijavi se</button>
+    </form>
+    <p class="text-stone-500 text-sm text-center mt-6">Nemaš račun? <a href="{% url 'register' %}" class="text-amber-400 hover:underline">Registriraj se</a></p>
+</div>
+
+<style>
+    input { background: #1c1917; border: 1px solid #44403c; color: #e7e5e4; padding: 0.5rem 0.75rem; border-radius: 0.25rem; width: 100%; }
+    input:focus { outline: none; border-color: #fbbf24; }
+</style>
+
+{% endblock %}

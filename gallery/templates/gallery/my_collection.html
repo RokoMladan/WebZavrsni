@@ -1,0 +1,39 @@
+{% extends 'gallery/base.html' %}
+{% block title %}Moja kolekcija — Artis{% endblock %}
+{% block content %}
+
+<h1 class="text-3xl font-light mb-10">Moja kolekcija</h1>
+
+<h2 class="text-2xl font-light mb-4 border-b border-stone-800 pb-2">Omiljena djela</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+    {% for fav in favorites %}
+    <div class="bg-stone-900 rounded p-4 border border-transparent hover:border-amber-400 transition">
+        {% if fav.artwork.image %}
+        <img src="{{ fav.artwork.image.url }}" class="w-full h-48 object-contain bg-stone-800 rounded mb-3">
+        {% else %}
+        <div class="w-full h-48 bg-stone-800 rounded mb-3 flex items-center justify-center text-stone-600">Bez slike</div>
+        {% endif %}
+        <a href="{% url 'artwork-detail' fav.artwork.pk %}" class="text-lg hover:text-amber-400 transition">{{ fav.artwork.title }}</a>
+        <p class="text-stone-400 text-sm mt-1">{{ fav.artwork.artist.name }} · {{ fav.artwork.year }}</p>
+    </div>
+    {% empty %}
+    <p class="text-stone-500 col-span-3">Nemaš omiljenih djela. Klikni "Dodaj u favorite" na nekom djelu da ga dodaš!</p>
+    {% endfor %}
+</div>
+
+<h2 class="text-2xl font-light mb-4 border-b border-stone-800 pb-2">Spremljena događanja</h2>
+<div class="flex flex-col gap-4">
+    {% for bm in bookmarks %}
+    <div class="bg-stone-900 rounded p-5 flex justify-between items-center">
+        <div>
+            <a href="{% url 'event-detail' bm.event.pk %}" class="text-xl hover:text-amber-400 transition">{{ bm.event.title }}</a>
+            <p class="text-stone-400 text-sm mt-1">{{ bm.event.get_event_type_display }} · {{ bm.event.location }}</p>
+        </div>
+        <span class="text-amber-400 text-sm">{{ bm.event.date }}</span>
+    </div>
+    {% empty %}
+    <p class="text-stone-500">Nemaš spremljenih događanja. Klikni "Spremi događanje" na nekom događanju da ga dodaš!</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'gallery/base.html' %}
+{% block title %}Djela — Artis{% endblock %}
+{% block content %}
+
+<div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-light">Umjetnička djela</h1>
+    {% if user.is_staff %}
+    <a href="{% url 'artwork-create' %}" class="bg-amber-400 text-stone-950 px-4 py-2 rounded hover:bg-amber-300 transition">+ Novo djelo</a>
+    {% endif %}
+</div>
+
+<input type="text" name="q"
+    hx-get="{% url 'htmx-search' %}"
+    hx-trigger="keyup changed delay:300ms"
+    hx-target="#results"
+    placeholder="Pretraži djela..."
+    class="w-full bg-stone-900 border border-stone-700 rounded px-4 py-2 mb-6 focus:outline-none focus:border-amber-400">
+
+<div id="results">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {% for artwork in artworks %}
+        <div class="bg-stone-900 rounded p-4 hover:border hover:border-amber-400 transition border border-transparent">
+            {% if artwork.image %}
+                <img src="{{ artwork.image.url }}" class="w-full h-48 object-contain bg-stone-800 rounded mb-3">
+            {% else %}
+                <div class="w-full h-48 bg-stone-800 rounded mb-3 flex items-center justify-center text-stone-600">Bez slike</div>
+            {% endif %}
+            <a href="{% url 'artwork-detail' artwork.pk %}" class="text-lg hover:text-amber-400 transition">{{ artwork.title }}</a>
+            <p class="text-stone-400 text-sm mt-1">{{ artwork.artist.name }} · {{ artwork.get_medium_display }} · {{ artwork.year }}</p>
+            {% if user.is_staff %}
+            <div class="flex gap-3 mt-3 text-sm">
+                <a href="{% url 'artwork-update' artwork.pk %}" class="text-amber-400 hover:underline">Uredi</a>
+                <a href="{% url 'artwork-delete' artwork.pk %}" class="text-red-400 hover:underline">Briši</a>
+            </div>
+            {% endif %}
+        </div>
+        {% empty %}
+        <p class="text-stone-500 col-span-3">Nema dostupnih djela.</p>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

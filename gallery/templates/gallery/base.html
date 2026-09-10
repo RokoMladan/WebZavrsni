@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="hr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Galerija{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+
+<body class="bg-stone-950 text-stone-100 min-h-screen">
+    <nav class="border-b border-stone-800 px-8 py-4 flex justify-between items-center">
+        <a href="{% url 'home' %}" class="text-xl font-light tracking-widest uppercase">Galerija</a>
+        <div class="flex gap-6 text-sm">
+            <a href="{% url 'artwork-list' %}" class="hover:text-amber-400 transition">Djela</a>
+            <a href="{% url 'artist-list' %}" class="hover:text-amber-400 transition">Umjetnici</a>
+            <a href="{% url 'event-list' %}" class="hover:text-amber-400 transition">Događanja</a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'my-collection' %}" class="hover:text-amber-400 transition">Moja kolekcija</a>
+            <a href="{% url 'logout' %}" class="hover:text-amber-400 transition">Odjava ({{ user.username }})</a>
+            {% else %}
+            <a href="{% url 'login' %}" class="hover:text-amber-400 transition">Prijava</a>
+            <a href="{% url 'register' %}" class="hover:text-amber-400 transition">Registracija</a>
+            {% endif %}
+        </div>
+    </nav>
+    <main class="px-8 py-10 max-w-6xl mx-auto">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+
+</html>
